@@ -14,38 +14,37 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
-train_df = pd.read_csv('beeline test\\train.csv')
+train_df = pd.read_csv('train.csv')
 
 y = train_df['y']
 y = keras.utils.to_categorical(y)
-excuses = ['y']
+drop_one = ['y']
 
 for line in train_df:
     if train_df[line].dtype == 'object':
-        excuses.append(line)
+        drop_one.append(line)
 
-train_df = pd.get_dummies(train_df[excuses])
+train_df = pd.get_dummies(train_df[drop_one])
 
 X_check = train_df.drop(columns='y')
 y_check = train_df['y']
 X_check = X_check.apply(lambda x: x.fillna(x.mean()),axis=0)
 
 from sklearn.ensemble import RandomForestClassifier
-forest = RandomForestClassifier()
-forest.fit(X_check, y_check)
+forest = RandomForestClassifier().fit(X_check, y_check)
 d_imp = pd.DataFrame([forest.feature_importances_]).T
 d_imp.index = X_check.columns
 d_imp = d_imp.sort_values(0)
 d_imp = d_imp[::-1]
 d_imp[0] = np.cumsum(d_imp[0])
 
-excuses2=[]
+drop_two=[]
 
 drop_features = d_imp[d_imp[0] >= 0.9].index
 for feature in drop_features:
-    excuses2.append(feature)
+    drop_two.append(feature)
 
-X = train_df.drop(columns=excuses2)
+X = train_df.drop(columns=drop_two)
 
 X = X.apply(lambda x: x.fillna(x.mean()),axis=0)
 
