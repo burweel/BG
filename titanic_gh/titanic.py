@@ -67,6 +67,7 @@ lin_model = SGDClassifier()
 
 forest.fit(X_train_scaled, y_train)
 forest_acc = forest.score(X_test_scaled, y_test)
+# forest_acc = 0.822
 
 parameters = {'alpha': [.00001, .0001, .001, .01, .1, 1, 10, 100, 1000, 10000]}
 
